@@ -1,0 +1,133 @@
+openapi: 3.0.3
+info:
+  title: "File downloader"
+  description: "Application for downloading files"
+  version: 0.0.1
+
+servers:
+  - url: "https://{hostname}"
+    variables:
+      hostname:
+        default: "localhost"
+
+paths:
+  /files:
+    post:
+      tags:
+        - files
+      operationId: createRequest
+      requestBody:
+        description: files link collection for downloading
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDownloadRequest'
+      responses:
+        '201':
+          description: download request successfully
+          headers:
+            Content-Location:
+              description: create download request
+              schema:
+                type: string
+
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        '422':
+          description: invalid data for request creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /files/{requestId}:
+    get:
+      tags:
+        - files
+      operationId: getFiles
+      parameters:
+        - in: path
+          name: requestId
+          schema:
+            type: string
+          required: true
+          description: request id
+      responses:
+        '200':
+          description: found request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadRequestResponse'
+
+        '404':
+          description: request not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+
+
+components:
+  schemas:
+    CreateDownloadRequest:
+      type: object
+      required: [links]
+      properties:
+        links:
+          type: array
+          items:
+            type: string
+
+    DownloadRequestResponse:
+      type: object
+      required: [responses]
+      properties:
+        responses:
+          type: array
+          items:
+            $ref: '#/components/schemas/DownloadLinkStatusResponse'
+
+    DownloadLinkStatusResponse:
+      type: object
+      required: [status, link]
+      properties:
+        status:
+          type: string
+          enum: ["Wait", "Error", "Ready"]
+        link:
+          type: string
+
+    Error:
+      type: object
+      required: [slug, details]
+      properties:
+        slug:
+          type: string
+        details:
+          type: string
+
+

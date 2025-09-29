@@ -1,0 +1,8 @@
+request-logger:
+  path: 'data-dir/request-logger.csv'
+  
+download-tasks:
+  path: 'data-dir/download-tasks.csv'
+
+files-directory:
+  path: 'data-dir/files-dir/'

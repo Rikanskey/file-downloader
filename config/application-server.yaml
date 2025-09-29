@@ -1,0 +1,8 @@
+http:
+  port: 8080
+
+request-logger:
+  path: 'data-dir/request-logger.csv'
+
+download-tasks:
+  path: 'data-dir/download-tasks.csv'
